@@ -135,7 +135,8 @@ async function runPairingAlgorithm(user) {
             perfectList.innerHTML += createCard(m);
         });
     } else {
-        document.getElementById('matchStatus').innerText = "${perfect.length} partners found!";
+        // FIXED BUG: Accurately renders 0 when no perfect matches are found
+        document.getElementById('matchStatus').innerText = "0 Partner(s) Found!";
     }
 
     if (flex.length > 0) {
@@ -191,4 +192,3 @@ function createCard(m) {
         </div>
     `;
 }
-
