@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge ⚡ | Bingham University</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* =========================================
+           ⚡ HACKATHON WINNING STYLES ⚡
+           ========================================= */
+
+        /* 1. Base Fixes & Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 2. Dropdown Visibility Fix */
+        html[data-theme="dark"] {
+            color-scheme: dark;
+        }
+        html[data-theme="dark"] select,
+        html[data-theme="dark"] select option {
+            background-color: #1a1a2e; /* A richer, sleeker dark color */
+            color: #ffffff;
+        }
+
+        /* 3. Epic Gradient Heading */
+        h1 {
+            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        /* 4. Ambient Animated Background Blobs */
+        .background-blobs {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle at 15% 50%, rgba(0, 201, 255, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(146, 254, 157, 0.08), transparent 25%);
+            animation: floatBlobs 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatBlobs {
+            0% { transform: scale(1) translate(0px, 0px); opacity: 0.8; }
+            100% { transform: scale(1.1) translate(20px, -20px); opacity: 1; }
+        }
+
+        /* 5. Premium Glassmorphism & Card Hover Effects */
+        .glass-card, .hero-card, .dashboard-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .glass-card:hover, .hero-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* 6. Button Micro-interactions */
+        button {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+
+        .main-btn, .success-btn {
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-btn:hover, .success-btn:hover {
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 10px 25px rgba(0, 201, 255, 0.3) !important;
+            filter: brightness(1.1);
+        }
+
+        .main-btn:active, .success-btn:active {
+            transform: translateY(1px) !important;
+            box-shadow: 0 4px 10px rgba(0, 201, 255, 0.2) !important;
+        }
+
+        /* 7. Input Glowing Focus State */
+        input:focus, select:focus {
+            outline: none !important;
+            border-color: #00C9FF !important;
+            box-shadow: 0 0 12px rgba(0, 201, 255, 0.2) !important;
+        }
+
+        /* 8. Stealthy Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(150, 150, 150, 0.6);
+        }
+
+        /* 9. Smooth Page Load/Transition Animation */
+        .view:not(.hidden) {
+            animation: fadeSlideUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="themeToggleBtn" aria-label="Toggle Core Theme" style="position: fixed; top: 20px; right: 20px; z-index: 100; border: none; background: var(--input-bg); border: 1px solid var(--input-border); width: 44px; height: 44px; border-radius: 12px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--card-shadow); transition: all 0.2s ease;">🌙</button>
+
+    <div class="background-blobs"></div>
+
+    <section id="home" class="view">
+        <div class="hero-card" style="padding: 40px;">
+            <div class="logo-circle" style="font-size: 2.5rem; margin-bottom: 10px;">⚡</div>
+            <h1>STUDY-SYNC</h1>
+            <p class="subtitle" style="color: var(--text-muted); margin-bottom: 30px; font-weight: 600; font-size: 0.95rem;">Real-time study group matching for Bingham students.</p>
+            <button class="main-btn" onclick="checkExistingUser()" style="padding: 12px 24px; border-radius: 10px;">Enter Portal</button>
+        </div>
+    </section>
+
+    <section id="onboarding" class="view hidden">
+        <div class="glass-card" style="padding: 30px;">
+            <div class="form-header" style="margin-bottom: 24px;">
+                <h2 style="margin: 0 0 8px 0;">Create Account</h2>
+                <p style="color: var(--text-muted); margin: 0; font-size: 0.85rem; font-weight: 600;">Your details will be saved for others to find you.</p>
+            </div>
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="userName" placeholder="Your Name">
+            </div>
+
+            <div class="input-group">
+                <label>Phone (WhatsApp)</label>
+                <input type="tel" id="userPhone" placeholder="08123456789">
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Faculty</label>
+                    <select id="userFaculty" class="input-field" required>
+                        <option value="" disabled selected>Select Faculty...</option>
+                        <option value="Administration">Administration</option>
+                        <option value="Allied Health Sciences">Allied Health Sciences</option>
+                        <option value="Architecture">Architecture</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Basic Clinical Sciences">Basic Clinical Sciences</option>
+                        <option value="Basic Medical Sciences">Basic Medical Sciences</option>
+                        <option value="Clinical Sciences">Clinical Sciences</option>
+                        <option value="Communication and Media Studies">Communication and Media Studies</option>
+                        <option value="Computing Science">Computing Science</option>
+                        <option value="Education">Education</option>
+                        <option value="Environmental Sciences">Environmental Sciences</option>
+                        <option value="Law">Law</option>
+                        <option value="Pharmaceutical Sciences">Pharmaceutical Sciences</option>
+                        <option value="Science and Technology">Science and Technology</option>
+                        <option value="Social Sciences">Social Sciences</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Department</label>
+                    <input type="text" id="userDept" placeholder="e.g. CS">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Gender</label>
+                    <select id="userGender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Level</label>
+                    <select id="userLevel">
+                        <option value="IJMB">IJMB</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="300">300</option>
+                        <option value="400">400</option>
+                        <option value="500">500</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="divider"><span>Preferences</span></div>
+
+            <div class="input-group">
+                <label>Partner Gender Preference</label>
+                <select id="prefGender">
+                    <option value="Any">Any Gender</option>
+                    <option value="Male">Prefer Male</option>
+                    <option value="Female">Prefer Female</option>
+                </select>
+            </div>
+
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Group Size</label>
+                    <input type="number" id="groupSize" min="2" max="4" value="2">
+                </div>
+                <div class="input-group">
+                    <label>Your Role</label>
+                    <select id="userRole">
+                        <option value="The Teacher">The Teacher</option>
+                        <option value="The Writer">The Writer</option>
+                        <option value="The Listener">The Listener</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="main-btn shadow-btn" id="saveBtn" onclick="saveToCloud()" style="margin-top: 10px; width: 100%; padding: 12px; border-radius: 10px;">Save & Find Partners ⚡</button>
+        </div>
+    </section>
+
+    <section id="dashboard" class="view hidden">
+        <div class="dashboard-container glass-card" style="padding: 30px;">
+            <h1 id="welcomeUser" style="margin-bottom: 8px;">Matches</h1>
+            <div style="margin-bottom: 24px;"><p id="matchStatus" class="status-badge">Searching Cloud...</p></div>
+
+            <div id="perfectMatches"></div>
+
+            <div id="flexMatchContainer" class="hidden" style="margin-top: 30px;">
+                <div class="flex-header" style="margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 4px 0;">Extended Suggestions</h3>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">Available but different gender</span>
+                </div>
+                <div id="flexMatches"></div>
+            </div>
+
+            <div class="partner-found-box" style="margin-top: 30px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                <p style="margin: 0 0 16px 0;">Found a partner? Stop appearing in searches:</p>
+                <button class="success-btn" onclick="deactivateAccount()" style="width: 100%; padding: 12px; border-radius: 10px;">I've Found a Match! 🎉</button>
+            </div>
+
+            <div class="actions" style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="edit-btn" onclick="showView('onboarding')" style="flex: 1; padding: 10px; border-radius: 8px;">Update Info</button>
+                <button class="clear-btn" onclick="clearData()" style="flex: 1; padding: 10px; border-radius: 8px;">Logout</button>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
